@@ -16,7 +16,7 @@ namespace lab8._3
         {
             InitializeComponent();
         }
-        double[] probT, probEx, Err;
+        double[] probT, probEx;
         int N;
         int[] stat;
         Random rnd = new Random();
@@ -25,7 +25,6 @@ namespace lab8._3
         {
             probT = new double[5];
             probEx = new double[5];
-            Err = new double[5];
             stat = new int[5];
             N = int.Parse(textBox6.Text);
             probT[0] = double.Parse(textBox1.Text);
@@ -34,29 +33,32 @@ namespace lab8._3
             probT[3] = double.Parse(textBox4.Text);
             probT[4] = 1;
 
-            for (int i = 0; i < 4; i++)
-            {
-                probT[4] = probT[4] - probT[i];
-            }
+            
             for(int i = 0; i<N; i++)
             {
                 a = rnd.NextDouble();
-                double summ = 0;
-                for (int k =0; k <5; k++)
+
+                for (int k = 0; k < 5; k++)
                 {
-                    summ += probT[k];
-                    if (a <= summ)
+                    for (int j = 0; j < 5; j++)
                     {
-                        stat[k]++;
-                        break;
+                        double gap = 0;
+                        if (j > 0) gap = (probT[j] - probT[j - 1]) / 2;
+                        if (a < probT[j])
+                        {
+                            if ((a < probT[j] - gap) && (j > 0))
+                            {
+                                stat[j - 1]++;
+                                break;
+                            }
+                            else { stat[j]++; break; }
+                        }
                     }
                 }
             }
             for (int i = 0; i<5; i++)
             {
                 probEx[i] = stat[i] / (double)N;
-                Err[i] = Math.Abs(1 - (probEx[i] / probT[i])) * 100;
-
             }
             chart1.Series[0].Points.Clear();
             for (int i = 0; i < 5; i++)
